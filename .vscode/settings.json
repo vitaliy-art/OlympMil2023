@@ -10,5 +10,8 @@
         "riussi",
         "Waka",
         "wakatime"
+    ],
+    "python.analysis.extraPaths": [
+        "./src/task"
     ]
 }
