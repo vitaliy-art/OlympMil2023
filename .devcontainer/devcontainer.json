@@ -1,0 +1,20 @@
+{
+   "build": {
+      "dockerfile": "Dockerfile"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"qwtel.sqlite-viewer",
+				"streetsidesoftware.code-spell-checker",
+				"riussi.code-stats-vscode",
+				"EditorConfig.EditorConfig",
+				"mhutchie.git-graph",
+				"donjayamanne.githistory",
+				"ckolkman.vscode-postgres",
+				"ms-python.vscode-pylance",
+				"WakaTime.vscode-wakatime"
+			]
+		}
+	}
+}
