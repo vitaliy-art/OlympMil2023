@@ -112,6 +112,13 @@ class Config:
                 self.action = Action.SHOW_VEHICLE_DAMAGE
                 break
 
+        if self.action == Action.SHOW_DESTROYED_COMPONENTS:
+            if self.vehicle_code != "":
+                self.action = Action.SHOW_DESTROYED_VEHICLE_COMPONENTS
+        elif self.action == Action.SHOW_SERVICEABLE_COMPONENTS:
+            if self.vehicle_code != "":
+                self.action = Action.SHOW_SERVICEABLE_VEHICLE_COMPONENTS
+
     def _parse_vehicle_code(self):
         for arg in self.args:
             if arg.startswith(_vehicle_code):
@@ -124,8 +131,8 @@ class Config:
         self._parse_db_name()
         self._parse_input_file()
         self._parse_output_file()
-        self._parse_action()
         self._parse_vehicle_code()
+        self._parse_action()
 
     def validate(self):
         if self.db_type == DB.UNKNOWN:
