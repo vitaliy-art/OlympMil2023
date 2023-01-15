@@ -38,7 +38,7 @@ class StorageJSON(Storage):
     def save_vehicles(self, vehicles: List[Vehicle]):
         with open(self._vehicles_file_name, 'r+') as f:
             storedList: List[Vehicle] = json.load(
-                f, object_hook=lambda x: self._vehicle_from_dict(x)
+                f, object_hook=lambda x: Vehicle.from_dict(x)
             )
 
             mappedVehicles: Dict[int, Vehicle] = {
@@ -57,7 +57,7 @@ class StorageJSON(Storage):
     def save_components(self, components: List[Component]):
         with open(self._components_file_name, 'r+') as f:
             storedList: List[Component] = json.load(
-                f, object_hook=lambda x: self._component_from_dict(x)
+                f, object_hook=lambda x: Component.from_dict(x)
             )
 
             mappedComponents: Dict[int, Component] = {
@@ -78,12 +78,12 @@ class StorageJSON(Storage):
         components: List[Component] = []
         with open(self._vehicles_file_name, 'r') as f:
             vehicles = json.load(
-                f, object_hook=lambda x: self._vehicle_from_dict(x)
+                f, object_hook=lambda x: Vehicle.from_dict(x)
             )
 
         with open(self._components_file_name, 'r') as f:
             components = json.load(
-                f, object_hook=lambda x: self._component_from_dict(x)
+                f, object_hook=lambda x: Component.from_dict(x)
             )
 
         for v in vehicles:
@@ -96,7 +96,7 @@ class StorageJSON(Storage):
     def get_vehicle_types(self) -> List[str]:
         with open(self._vehicles_file_name, 'r') as f:
             vehicles = json.load(
-                f, object_hook=lambda x: self._vehicle_from_dict(x)
+                f, object_hook=lambda x: Vehicle.from_dict(x)
             )
 
             return list({
@@ -106,5 +106,5 @@ class StorageJSON(Storage):
     def get_components(self) -> List[Component]:
         with open(self._components_file_name, 'r') as f:
             return json.load(
-                f, object_hook=lambda x: self._component_from_dict(x)
+                f, object_hook=lambda x: Component.from_dict(x)
             )

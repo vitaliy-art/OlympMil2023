@@ -36,19 +36,3 @@ class Storage(ABC):
     @abstractmethod
     def get_components(self) -> List[Component]:
         """Get components"""
-
-    def _vehicle_from_dict(d: Dict[str, any]):
-        vehicle = Vehicle()
-        vehicle.code = d["code"]
-        vehicle.name = d["name"]
-        vehicle.type = d["type"]
-        return vehicle
-
-    def _component_from_dict(d: Dict[str, any]):
-        component = Component()
-        component.code = d["code"]
-        component.name = d["name"]
-        component.price = d["price"]
-        component.destroyed = bool(d["destroyed"])
-        component.vehicle = d["vehicle"]
-        return component

@@ -62,7 +62,7 @@ class StorageSQLite(Storage):
         with self._get_connection() as cx:
             cu = cx.cursor()
             storedVehicles: List[Vehicle] = {
-                r["code"]: self._vehicle_from_dict(r)
+                r["code"]: Vehicle.from_dict(r)
                 for r in cu.execute(_ALL_VEHICLES_SQL)
             }
 
@@ -86,7 +86,7 @@ class StorageSQLite(Storage):
         with self._get_connection() as cx:
             cu = cx.cursor()
             storedComponents: List[Component] = {
-                r["code"]: self._component_from_dict(r)
+                r["code"]: Component.from_dict(r)
                 for r in cu.execute(_ALL_COMPONENTS_SQL)
             }
 
@@ -116,12 +116,12 @@ class StorageSQLite(Storage):
         with self._get_connection() as cx:
             cu = cx.cursor()
             vehicles: List[Vehicle] = (
-                self._vehicle_from_dict(r)
+                Vehicle.from_dict(r)
                 for r in cu.execute(_ALL_VEHICLES_SQL)
             )
 
             components: List[Component] = (
-                self._component_from_dict(r)
+                Component.from_dict(r)
                 for r in cu.execute(_ALL_COMPONENTS_SQL)
             )
 
@@ -136,7 +136,7 @@ class StorageSQLite(Storage):
         with self._get_connection() as cx:
             cu = cx.cursor()
             vehicles: List[Vehicle] = (
-                self._vehicle_from_dict(r)
+                Vehicle.from_dict(r)
                 for r in cu.execute(_ALL_VEHICLES_SQL)
             )
 
@@ -148,6 +148,6 @@ class StorageSQLite(Storage):
         with self._get_connection() as cx:
             cu = cx.cursor()
             return (
-                self._component_from_dict(r)
+                Component.from_dict(r)
                 for r in cu.execute(_ALL_COMPONENTS_SQL)
             )
