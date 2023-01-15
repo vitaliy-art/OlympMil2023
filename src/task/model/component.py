@@ -1,3 +1,6 @@
+from typing import Dict
+
+
 class Component:
     """Component"""
 
@@ -7,6 +10,16 @@ class Component:
         self.price = .0
         self.destroyed = False
         self.vehicle = ""
+
+    @staticmethod
+    def from_dict(d: Dict[str, any]):
+        component = Component()
+        component.code = d["code"]
+        component.name = d["name"]
+        component.price = d["price"]
+        component.destroyed = bool(d["destroyed"])
+        component.vehicle = d["vehicle"]
+        return component
 
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, self.__class__):
