@@ -8,14 +8,8 @@ from model.vehicle import Vehicle
 
 class Storage(ABC):
 
-    def _get_cfg(self) -> Config:
-        return self.cfg
-
-    @abstractmethod
-    def _set_cfg(self, val: Config):
-        """Save configuration"""
-
-    cfg = property(_get_cfg, _set_cfg)
+    def __init__(self, cfg: Config):
+        self.cfg = cfg
 
     @abstractmethod
     def save_vehicles(self, vehicles: List[Vehicle]):

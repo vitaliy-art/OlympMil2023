@@ -2,16 +2,16 @@ import json
 from typing import Dict, List
 
 from config.config import Config
-from model.component import Component
-from model.vehicle import Vehicle
+from model.component import Component, ComponentEncoder
+from model.vehicle import Vehicle, VehicleEncoder
 from storage.storage import Storage
 
 
 class StorageJSON(Storage):
     """JSON storage implementation"""
 
-    def _set_cfg(self, val: Config):
-        self.cfg = val
+    def __init__(self, cfg: Config):
+        super().__init__(cfg)
 
     def _vehicles_file_name(self):
         return self.cfg.json_path + "vehicles.json"
@@ -32,11 +32,11 @@ class StorageJSON(Storage):
             for v in vehicles:
                 mappedVehicles[v.code] = v
 
-            storedList = (
+            storedList = [
                 v.to_dict() for v in mappedVehicles.values()
-            )
+            ]
 
-            json.dump(storedList, f)
+            json.dump(storedList, f, cls=VehicleEncoder)
 
     def save_components(self, components: List[Component]):
         with open(self._components_file_name, 'r+') as f:
@@ -51,11 +51,11 @@ class StorageJSON(Storage):
             for c in components:
                 mappedComponents[c.code] = c
 
-            storedList = (
+            storedList = [
                 c.to_dict() for c in mappedComponents.values()
-            )
+            ]
 
-            json.dump(storedList, f)
+            json.dump(storedList, f, cls=ComponentEncoder)
 
     def get_vehicles(self) -> List[Vehicle]:
         vehicles: List[Vehicle] = []

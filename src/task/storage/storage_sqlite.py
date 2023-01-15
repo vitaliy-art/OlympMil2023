@@ -1,5 +1,5 @@
 import sqlite3
-from typing import List
+from typing import List, Any
 
 from config.config import Config
 from model.component import Component
@@ -46,17 +46,24 @@ _UPDATE_COMPONENT_SQL = """
 class StorageSQLite(Storage):
     """SQLite3 storage implementation"""
 
-    def _set_cfg(self, val: Config):
-        self.cfg = val
+    def __init__(self, cfg: Config):
+        super().__init__(cfg)
 
     def _db_file_name(self):
         return self.cfg.db_file_name
 
     def _get_connection(self):
-        cx = sqlite3.connect(self._db_file_name)
-        cx.execute("PRAGMA foreign_keys = ON;")
-        cx.cursor().execute(_INIT_SQL)
+        cx = sqlite3.connect(self._db_file_name())
+        cx.executescript(f"PRAGMA foreign_keys = ON;{_INIT_SQL}")
+        cx.row_factory = self._dict_factory
         return cx
+
+    def _dict_factory(self, cursor: sqlite3.Cursor, row: List[Any]):
+        d = {}
+        for idx, col in enumerate(cursor.description):
+            d[col[0]] = row[idx]
+
+        return d
 
     def save_vehicles(self, vehicles: List[Vehicle]):
         with self._get_connection() as cx:
@@ -115,15 +122,15 @@ class StorageSQLite(Storage):
     def get_vehicles(self) -> List[Vehicle]:
         with self._get_connection() as cx:
             cu = cx.cursor()
-            vehicles: List[Vehicle] = (
+            vehicles: List[Vehicle] = [
                 Vehicle.from_dict(r)
                 for r in cu.execute(_ALL_VEHICLES_SQL)
-            )
+            ]
 
-            components: List[Component] = (
+            components: List[Component] = [
                 Component.from_dict(r)
                 for r in cu.execute(_ALL_COMPONENTS_SQL)
-            )
+            ]
 
             for v in vehicles:
                 v.components = [
@@ -147,7 +154,7 @@ class StorageSQLite(Storage):
     def get_components(self) -> List[Component]:
         with self._get_connection() as cx:
             cu = cx.cursor()
-            return (
+            return [
                 Component.from_dict(r)
                 for r in cu.execute(_ALL_COMPONENTS_SQL)
-            )
+            ]
