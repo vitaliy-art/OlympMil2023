@@ -13,20 +13,19 @@ class Executor:
 
     def __init__(self, cfg: Config) -> None:
         self.cfg = cfg
-        self.storage: Storage = self._get_storage(cfg)
+        self.storage = self._get_storage(cfg)  # type: Storage
 
     def _get_storage(self, cfg: Config) -> Storage:
-        match cfg.db_type:
-            case DB.FILE:
-                return StorageJSON(cfg)
-            case DB.SQLITE:
-                return StorageSQLite(cfg)
-            case _:
-                raise TypeError(f"unexpected database type: {cfg.db_type}")
+        if cfg.db_type == DB.FILE:
+            return StorageJSON(cfg)
+        elif cfg.db_type == DB.SQLITE:
+            return StorageSQLite(cfg)
+        else:
+            raise TypeError("unexpected database type: %s" % cfg.db_type)
 
     def _save_vehicles(self):
         input_file = self.cfg.input_file
-        vehicles: List[Vehicle] = []
+        vehicles = []  # type: List[Vehicle]
         with open(input_file, 'r') as f:
             vehicles = json.load(
                 f, object_hook=lambda x: Vehicle.from_dict(x)
@@ -36,7 +35,7 @@ class Executor:
 
     def _save_components(self):
         input_file = self.cfg.input_file
-        components: List[Component] = []
+        components = []  # type: List[Component]
         with open(input_file, 'r') as f:
             components = json.load(
                 f, object_hook=lambda x: Component.from_dict(x)
@@ -183,36 +182,35 @@ class Executor:
             f.write(str(damage))
 
     def execute(self):
-        match self.cfg.action:
-            case Action.ADD_VEHICLES:
-                self._add_vehicles()
-            case Action.ADD_COMPONENTS:
-                self._add_components()
-            case Action.UPDATE_VEHICLES:
-                self._update_vehicles()
-            case Action.UPDATE_COMPONENTS:
-                self._update_components()
-            case Action.SHOW_ALL_VEHICLES:
-                self._show_all_vehicles()
-            case Action.SHOW_ALL_COMPONENTS:
-                self._show_all_components()
-            case Action.SHOW_VEHICLE_TYPES:
-                self._show_vehicle_types()
-            case Action.SHOW_DESTROYED_VEHICLES:
-                self._show_destroyed_vehicles()
-            case Action.SHOW_SERVICEABLE_VEHICLES:
-                self._show_serviceable_vehicles()
-            case Action.SHOW_VEHICLE:
-                self._show_vehicle()
-            case Action.SHOW_DESTROYED_COMPONENTS:
-                self._show_destroyed_components()
-            case Action.SHOW_DESTROYED_VEHICLE_COMPONENTS:
-                self._show_destroyed_vehicle_components()
-            case Action.SHOW_SERVICEABLE_COMPONENTS:
-                self._show_serviceable_components()
-            case Action.SHOW_SERVICEABLE_VEHICLE_COMPONENTS:
-                self._show_serviceable_vehicle_components()
-            case Action.SHOW_VEHICLE_DAMAGE:
-                self._show_vehicle_damage()
-            case _:
-                raise TypeError(f"unexpected action type: {self.cfg.action}")
+        if self.cfg.action == Action.ADD_VEHICLES:
+            self._add_vehicles()
+        elif self.cfg.action == Action.ADD_COMPONENTS:
+            self._add_components()
+        elif self.cfg.action == Action.UPDATE_VEHICLES:
+            self._update_vehicles()
+        elif self.cfg.action == Action.UPDATE_COMPONENTS:
+            self._update_components()
+        elif self.cfg.action == Action.SHOW_ALL_VEHICLES:
+            self._show_all_vehicles()
+        elif self.cfg.action == Action.SHOW_ALL_COMPONENTS:
+            self._show_all_components()
+        elif self.cfg.action == Action.SHOW_VEHICLE_TYPES:
+            self._show_vehicle_types()
+        elif self.cfg.action == Action.SHOW_DESTROYED_VEHICLES:
+            self._show_destroyed_vehicles()
+        elif self.cfg.action == Action.SHOW_SERVICEABLE_VEHICLES:
+            self._show_serviceable_vehicles()
+        elif self.cfg.action == Action.SHOW_VEHICLE:
+            self._show_vehicle()
+        elif self.cfg.action == Action.SHOW_DESTROYED_COMPONENTS:
+            self._show_destroyed_components()
+        elif self.cfg.action == Action.SHOW_DESTROYED_VEHICLE_COMPONENTS:
+            self._show_destroyed_vehicle_components()
+        elif self.cfg.action == Action.SHOW_SERVICEABLE_COMPONENTS:
+            self._show_serviceable_components()
+        elif self.cfg.action == Action.SHOW_SERVICEABLE_VEHICLE_COMPONENTS:
+            self._show_serviceable_vehicle_components()
+        elif self.cfg.action == Action.SHOW_VEHICLE_DAMAGE:
+            self._show_vehicle_damage()
+        else:
+            raise TypeError("unexpected action type: %s" % self.cfg.action)

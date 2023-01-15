@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import List
 
 from config.config import Config
 from model.component import Component

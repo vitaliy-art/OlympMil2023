@@ -21,13 +21,13 @@ class StorageJSON(Storage):
 
     def save_vehicles(self, vehicles: List[Vehicle]):
         with open(self._vehicles_file_name, 'r+') as f:
-            storedList: List[Vehicle] = json.load(
+            storedList = json.load(
                 f, object_hook=lambda x: Vehicle.from_dict(x)
-            )
+            )  # type: List[Vehicle]
 
-            mappedVehicles: Dict[int, Vehicle] = {
+            mappedVehicles = {
                 s.code: s for s in storedList
-            }
+            }  # type: Dict[int, Vehicle]
 
             for v in vehicles:
                 mappedVehicles[v.code] = v
@@ -40,13 +40,13 @@ class StorageJSON(Storage):
 
     def save_components(self, components: List[Component]):
         with open(self._components_file_name, 'r+') as f:
-            storedList: List[Component] = json.load(
+            storedList = json.load(
                 f, object_hook=lambda x: Component.from_dict(x)
-            )
+            )  # type: List[Component]
 
-            mappedComponents: Dict[int, Component] = {
+            mappedComponents = {
                 s.code: s for s in storedList
-            }
+            }  # type: Dict[int, Component]
 
             for c in components:
                 mappedComponents[c.code] = c
@@ -58,8 +58,8 @@ class StorageJSON(Storage):
             json.dump(storedList, f, cls=ComponentEncoder)
 
     def get_vehicles(self) -> List[Vehicle]:
-        vehicles: List[Vehicle] = []
-        components: List[Component] = []
+        vehicles = []  # type: List[Vehicle]
+        components = []  # type: List[Component]
         with open(self._vehicles_file_name, 'r') as f:
             vehicles = json.load(
                 f, object_hook=lambda x: Vehicle.from_dict(x)

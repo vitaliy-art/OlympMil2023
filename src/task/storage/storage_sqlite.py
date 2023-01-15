@@ -54,7 +54,7 @@ class StorageSQLite(Storage):
 
     def _get_connection(self):
         cx = sqlite3.connect(self._db_file_name())
-        cx.executescript(f"PRAGMA foreign_keys = ON;{_INIT_SQL}")
+        cx.executescript("PRAGMA foreign_keys = ON;%s" % _INIT_SQL)
         cx.row_factory = self._dict_factory
         return cx
 
@@ -68,13 +68,13 @@ class StorageSQLite(Storage):
     def save_vehicles(self, vehicles: List[Vehicle]):
         with self._get_connection() as cx:
             cu = cx.cursor()
-            storedVehicles: List[Vehicle] = {
+            storedVehicles = {
                 r["code"]: Vehicle.from_dict(r)
                 for r in cu.execute(_ALL_VEHICLES_SQL)
-            }
+            }  # type: List[Vehicle]
 
-            inserts: List[Vehicle] = []
-            updates: List[Vehicle] = []
+            inserts = []  # type: List[Vehicle]
+            updates = []  # type: List[Vehicle]
             for v in vehicles:
                 if v.code not in storedVehicles:
                     inserts.append(v)
@@ -92,13 +92,13 @@ class StorageSQLite(Storage):
     def save_components(self, components: List[Component]):
         with self._get_connection() as cx:
             cu = cx.cursor()
-            storedComponents: List[Component] = {
+            storedComponents = {
                 r["code"]: Component.from_dict(r)
                 for r in cu.execute(_ALL_COMPONENTS_SQL)
-            }
+            }  # type: List[Component]
 
-            inserts: List[Component] = []
-            updates: List[Component] = []
+            inserts = []  # type: List[Component]
+            updates = []  # type: List[Component]
             for c in components:
                 if c.code not in storedComponents:
                     inserts.append(c)
@@ -122,15 +122,15 @@ class StorageSQLite(Storage):
     def get_vehicles(self) -> List[Vehicle]:
         with self._get_connection() as cx:
             cu = cx.cursor()
-            vehicles: List[Vehicle] = [
+            vehicles = [
                 Vehicle.from_dict(r)
                 for r in cu.execute(_ALL_VEHICLES_SQL)
-            ]
+            ]  # type: List[Vehicle]
 
-            components: List[Component] = [
+            components = [
                 Component.from_dict(r)
                 for r in cu.execute(_ALL_COMPONENTS_SQL)
-            ]
+            ]  # type: List[Component]
 
             for v in vehicles:
                 v.components = [
@@ -142,10 +142,10 @@ class StorageSQLite(Storage):
     def get_vehicle_types(self) -> List[str]:
         with self._get_connection() as cx:
             cu = cx.cursor()
-            vehicles: List[Vehicle] = (
+            vehicles = (
                 Vehicle.from_dict(r)
                 for r in cu.execute(_ALL_VEHICLES_SQL)
-            )
+            )  # type: List[Vehicle]
 
             return list({
                 v.type for v in vehicles

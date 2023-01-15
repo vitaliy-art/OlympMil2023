@@ -137,34 +137,46 @@ class Config:
     def validate(self):
         if self.db_type == DB.UNKNOWN:
             raise KeyError(
-                f"missing database type, use key {_use_sqlite} or {_use_file}"
+                "missing database type, use key %s or %s" % _use_sqlite, _use_file
             )
 
         if self.action in {Action.SHOW_VEHICLE_DAMAGE, Action.SHOW_VEHICLE}:
             if self.vehicle_code == "":
                 raise KeyError(
-                    f"missing vehicle code, use key {_vehicle_code}"
+                    "missing vehicle code, use key %s" % _vehicle_code
                 )
 
         if self.action == Action.UNKNOWN:
             raise KeyError(
-                f"""
-                    missing action key, use:
-                    {_add_vehicles}
-                    {_add_components}
-                    {_update_vehicles}
-                    {_update_components}
-
-                    {_all_vehicles}
-                    {_all_components}
-                    {_vehicle_types}
-                    {_destroyed_vehicles}
-                    {_serviceable_vehicles}
-
-                    {_destroyed_components}
-                    {_serviceable_components}
-                    {_vehicle_damage}
                 """
+                    missing action key, use:
+                    %s
+                    %s
+                    %s
+                    %s
+
+                    %s
+                    %s
+                    %s
+                    %s
+                    %s
+
+                    %s
+                    %s
+                    %s
+                """ %
+                _add_vehicles,
+                _add_components,
+                _update_vehicles,
+                _update_components,
+                _all_vehicles,
+                _all_components,
+                _vehicle_types,
+                _destroyed_vehicles,
+                _serviceable_vehicles,
+                _destroyed_components,
+                _serviceable_components,
+                _vehicle_damage,
             )
 
 
