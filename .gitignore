@@ -188,3 +188,6 @@ poetry.toml
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
+bd.db
+out.json
+in.json
