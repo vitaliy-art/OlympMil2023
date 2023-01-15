@@ -2,8 +2,8 @@ import json
 from typing import List
 
 from config.config import DB, Action, Config
-from model.component import Component
-from model.vehicle import Vehicle
+from model.component import Component, ComponentEncoder
+from model.vehicle import Vehicle, VehicleEncoder
 from storage.storage import Storage
 from storage.storage_json import StorageJSON
 from storage.storage_sqlite import StorageSQLite
@@ -14,14 +14,13 @@ class Executor:
     def __init__(self, cfg: Config) -> None:
         self.cfg = cfg
         self.storage: Storage = self._get_storage(cfg)
-        self.storage.cfg = cfg
 
-    def _get_storage(cfg: Config) -> Storage:
+    def _get_storage(self, cfg: Config) -> Storage:
         match cfg.db_type:
             case DB.FILE:
-                return StorageJSON()
+                return StorageJSON(cfg)
             case DB.SQLITE:
-                return StorageSQLite()
+                return StorageSQLite(cfg)
             case _:
                 raise TypeError(f"unexpected database type: {cfg.db_type}")
 
@@ -75,13 +74,13 @@ class Executor:
         output_file = self._get_output_file()
         vehicles = self.storage.get_vehicles()
         with open(output_file, 'w') as f:
-            json.dump(vehicles, f)
+            json.dump(vehicles, f, cls=VehicleEncoder)
 
     def _show_all_components(self):
         output_file = self._get_output_file()
         components = self.storage.get_components()
         with open(output_file, 'w') as f:
-            json.dump(components, f)
+            json.dump(components, f, cls=ComponentEncoder)
 
     def _show_vehicle_types(self):
         output_file = self._get_output_file()
@@ -92,26 +91,26 @@ class Executor:
     def _show_destroyed_vehicles(self):
         output_file = self._get_output_file()
         vehicles = self.storage.get_vehicles()
-        destroyed = (
+        destroyed = [
             v for v in vehicles
-            if len((c for c in v.components if c.destroyed)) /
+            if len([c for c in v.components if c.destroyed]) /
             len(v.components) >= .6
-        )
+        ]
 
         with open(output_file, 'w') as f:
-            json.dump(destroyed, f)
+            json.dump(destroyed, f, cls=VehicleEncoder)
 
     def _show_serviceable_vehicles(self):
         output_file = self._get_output_file()
         vehicles = self.storage.get_vehicles()
-        serviceable = (
+        serviceable = [
             v for v in vehicles
-            if len((c for c in v.components if c.destroyed)) /
+            if len([c for c in v.components if c.destroyed]) /
             len(v.components) < .6
-        )
+        ]
 
         with open(output_file, 'w') as f:
-            json.dump(serviceable, f)
+            json.dump(serviceable, f, cls=VehicleEncoder)
 
     def _show_vehicle(self):
         output_file = self._get_output_file()
@@ -121,7 +120,7 @@ class Executor:
         text = ""
         for v in vehicles:
             if v.code == code:
-                text = json.dumps(v)
+                text = json.dumps(v, cls=VehicleEncoder)
                 break
 
         with open(output_file, 'w') as f:
@@ -130,58 +129,58 @@ class Executor:
     def _show_destroyed_components(self):
         output_file = self._get_output_file()
         components = self.storage.get_components()
-        destroyed = (
+        destroyed = [
             c for c in components if c.destroyed
-        )
+        ]
 
         with open(output_file, 'w') as f:
-            json.dump(destroyed, f)
+            json.dump(destroyed, f, cls=ComponentEncoder)
 
     def _show_destroyed_vehicle_components(self):
         output_file = self._get_output_file()
         code = self._get_vehicle_code()
         components = self.storage.get_components()
-        destroyed = (
+        destroyed = [
             c for c in components if c.vehicle == code and c.destroyed
-        )
+        ]
 
         with open(output_file, 'w') as f:
-            json.dump(destroyed, f)
+            json.dump(destroyed, f, cls=ComponentEncoder)
 
     def _show_serviceable_components(self):
         output_file = self._get_output_file()
         components = self.storage.get_components()
-        serviceable = (
+        serviceable = [
             c for c in components if not c.destroyed
-        )
+        ]
 
         with open(output_file, 'w') as f:
-            json.dump(serviceable, f)
+            json.dump(serviceable, f, cls=ComponentEncoder)
 
     def _show_serviceable_vehicle_components(self):
         output_file = self._get_output_file()
         code = self._get_vehicle_code()
         components = self.storage.get_components()
-        serviceable = (
+        serviceable = [
             c for c in components if c.vehicle == code and not c.destroyed
-        )
+        ]
 
         with open(output_file, 'w') as f:
-            json.dump(serviceable, f)
+            json.dump(serviceable, f, cls=ComponentEncoder)
 
     def _show_vehicle_damage(self):
         output_file = self._get_output_file()
         code = self._get_vehicle_code()
         components = self.storage.get_components()
-        vehicle_components = (
+        vehicle_components = [
             c for c in components if c.vehicle == code
-        )
+        ]
 
-        damage = len((c for c in vehicle_components if c.destroyed)) \
+        damage = len([c for c in vehicle_components if c.destroyed]) \
             / len(vehicle_components)
 
         with open(output_file, 'w') as f:
-            f.write(damage)
+            f.write(str(damage))
 
     def execute(self):
         match self.cfg.action:
