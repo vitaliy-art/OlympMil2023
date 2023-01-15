@@ -19,6 +19,13 @@ class Vehicle:
         vehicle.type = d["type"]
         return vehicle
 
+    def to_dict(self):
+        return {
+            "code": self.code,
+            "name": self.name,
+            "type": self.type,
+        }
+
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, self.__class__):
             return False

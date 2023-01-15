@@ -19,22 +19,6 @@ class StorageJSON(Storage):
     def _components_file_name(self):
         return self.cfg.json_path + "components.json"
 
-    def _vehicle_to_dict(v: Vehicle):
-        return {
-            "code": v.code,
-            "name": v.name,
-            "type": v.type,
-        }
-
-    def _component_to_dict(c: Component):
-        return {
-            "code": c.code,
-            "name": c.name,
-            "price": c.price,
-            "destroyed": c.destroyed,
-            "vehicle": c.vehicle,
-        }
-
     def save_vehicles(self, vehicles: List[Vehicle]):
         with open(self._vehicles_file_name, 'r+') as f:
             storedList: List[Vehicle] = json.load(
@@ -49,7 +33,7 @@ class StorageJSON(Storage):
                 mappedVehicles[v.code] = v
 
             storedList = (
-                self._vehicle_to_dict(v) for v in mappedVehicles.values()
+                v.to_dict() for v in mappedVehicles.values()
             )
 
             json.dump(storedList, f)
@@ -68,7 +52,7 @@ class StorageJSON(Storage):
                 mappedComponents[c.code] = c
 
             storedList = (
-                self._component_to_dict(c) for c in mappedComponents.values()
+                c.to_dict() for c in mappedComponents.values()
             )
 
             json.dump(storedList, f)

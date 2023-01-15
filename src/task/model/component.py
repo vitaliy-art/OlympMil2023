@@ -21,6 +21,15 @@ class Component:
         component.vehicle = d["vehicle"]
         return component
 
+    def to_dict(self):
+        return {
+            "code": self.code,
+            "name": self.name,
+            "price": self.price,
+            "destroyed": self.destroyed,
+            "vehicle": self.vehicle,
+        }
+
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, self.__class__):
             return False
