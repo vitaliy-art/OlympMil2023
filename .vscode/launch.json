@@ -1,0 +1,24 @@
+{
+    // Используйте IntelliSense, чтобы узнать о возможных атрибутах.
+    // Наведите указатель мыши, чтобы просмотреть описания существующих атрибутов.
+    // Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: main",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/task/main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "-sqlite",
+                "--db_name=db.bd",
+                "--serviceable_components",
+                "--input=in.json",
+                "--output=out.json",
+                "--vehicle_code=1"
+            ]
+        }
+    ]
+}
