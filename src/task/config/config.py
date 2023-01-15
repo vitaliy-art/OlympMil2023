@@ -26,14 +26,13 @@ _vehicle_damage = "--vehicle_damage"
 _vehicle_code = "--vehicle_code="
 
 _read_from_file = "--input="
-_write_to_file = "--output="
+_output_file = "--output="
 
 
 class Config:
     def __init__(self):
         self.args = sys.argv[1:]
-        self.db = DB.UNKNOWN
-        self.db_file_name = "database"
+        self.db_type = DB.UNKNOWN
         self.json_path = "." + os.sep
         self.db_file_name = "bd.db"
         self.input_file = ""
@@ -41,13 +40,13 @@ class Config:
         self.action = Action.UNKNOWN
         self.vehicle_code = ""
 
-    def _parse_write_to(self):
+    def _parse_db_type(self):
         for arg in self.args:
             if arg == _use_file:
-                self.db = DB.FILE
+                self.db_type = DB.FILE
                 break
             elif arg == _use_sqlite:
-                self.db = DB.SQLITE
+                self.db_type = DB.SQLITE
                 break
 
     def _parse_json_path(self):
@@ -70,8 +69,8 @@ class Config:
 
     def _parse_output_file(self):
         for arg in self.args:
-            if arg.startswith(_write_to_file):
-                self.output_file = arg.replace(_write_to_file, "", 1)
+            if arg.startswith(_output_file):
+                self.output_file = arg.replace(_output_file, "", 1)
                 break
 
     def _parse_action(self):
@@ -120,13 +119,46 @@ class Config:
                 break
 
     def parse_args(self):
-        self._parse_write_to()
+        self._parse_db_type()
         self._parse_json_path()
         self._parse_db_name()
         self._parse_input_file()
         self._parse_output_file()
         self._parse_action()
         self._parse_vehicle_code()
+
+    def validate(self):
+        if self.db_type == DB.UNKNOWN:
+            raise KeyError(
+                f"missing database type, use key {_use_sqlite} or {_use_file}"
+            )
+
+        if self.action in {Action.SHOW_VEHICLE_DAMAGE, Action.SHOW_VEHICLE}:
+            if self.vehicle_code == "":
+                raise KeyError(
+                    f"missing vehicle code, use key {_vehicle_code}"
+                )
+
+        if self.action == Action.UNKNOWN:
+            raise KeyError(
+                f"""
+                    missing action key, use:
+                    {_add_vehicles}
+                    {_add_components}
+                    {_update_vehicles}
+                    {_update_components}
+
+                    {_all_vehicles}
+                    {_all_components}
+                    {_vehicle_types}
+                    {_destroyed_vehicles}
+                    {_serviceable_vehicles}
+
+                    {_destroyed_components}
+                    {_serviceable_components}
+                    {_vehicle_damage}
+                """
+            )
 
 
 class DB(Enum):
