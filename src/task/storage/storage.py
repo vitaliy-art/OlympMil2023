@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import List
-from model.vehicle import Vehicle
-from model.component import Component
+from typing import Dict, List
+
 from config.config import Config
+from model.component import Component
+from model.vehicle import Vehicle
 
 
 class Storage(ABC):
@@ -28,8 +29,26 @@ class Storage(ABC):
     def get_vehicles(self) -> List[Vehicle]:
         """Get vehicles"""
 
+    @abstractmethod
     def get_vehicle_types(self) -> List[str]:
         """Get vehicle types"""
 
+    @abstractmethod
     def get_components(self) -> List[Component]:
         """Get components"""
+
+    def _vehicle_from_dict(d: Dict[str, any]):
+        vehicle = Vehicle()
+        vehicle.code = d["code"]
+        vehicle.name = d["name"]
+        vehicle.type = d["type"]
+        return vehicle
+
+    def _component_from_dict(d: Dict[str, any]):
+        component = Component()
+        component.code = d["code"]
+        component.name = d["name"]
+        component.price = d["price"]
+        component.destroyed = bool(d["destroyed"])
+        component.vehicle = d["vehicle"]
+        return component

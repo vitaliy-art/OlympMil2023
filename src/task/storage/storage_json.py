@@ -1,9 +1,10 @@
 import json
-from typing import List, Dict
-from model.vehicle import Vehicle
-from model.component import Component
-from storage.storage import Storage
+from typing import Dict, List
+
 from config.config import Config
+from model.component import Component
+from model.vehicle import Vehicle
+from storage.storage import Storage
 
 
 class StorageJSON(Storage):
@@ -17,22 +18,6 @@ class StorageJSON(Storage):
 
     def _components_file_name(self):
         return self.cfg.json_path + "components.json"
-
-    def _vehicle_from_dict(d: Dict[str, any]):
-        vehicle = Vehicle()
-        vehicle.code = d["code"]
-        vehicle.name = d["name"]
-        vehicle.type = d["type"]
-        return vehicle
-
-    def _component_from_dict(d: Dict[str, any]):
-        component = Component()
-        component.code = d["code"]
-        component.name = d["name"]
-        component.price = d["price"]
-        component.destroyed = d["destroyed"]
-        component.vehicle = d["vehicle"]
-        return component
 
     def _vehicle_to_dict(v: Vehicle):
         return {
@@ -102,9 +87,9 @@ class StorageJSON(Storage):
             )
 
         for v in vehicles:
-            v.components = (
+            v.components = [
                 c for c in components if c.vehicle == v.code
-            )
+            ]
 
         return vehicles
 
@@ -114,9 +99,9 @@ class StorageJSON(Storage):
                 f, object_hook=lambda x: self._vehicle_from_dict(x)
             )
 
-            return {
+            return list({
                 v.type for v in vehicles
-            }.keys()
+            })
 
     def get_components(self) -> List[Component]:
         with open(self._components_file_name, 'r') as f:
