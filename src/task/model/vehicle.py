@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 from model.component import Component
 
 
@@ -10,6 +10,14 @@ class Vehicle:
         self.name = ""
         self.type = ""
         self.components = []  # type: List[Component]
+
+    @staticmethod
+    def from_dict(d: Dict[str, any]):
+        vehicle = Vehicle()
+        vehicle.code = d["code"]
+        vehicle.name = d["name"]
+        vehicle.type = d["type"]
+        return vehicle
 
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, self.__class__):
