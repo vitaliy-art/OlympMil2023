@@ -1,4 +1,6 @@
-from typing import List, Dict
+import json
+from typing import Dict, List, Any
+
 from model.component import Component
 
 
@@ -40,3 +42,13 @@ class Vehicle:
             return False
 
         return True
+
+
+class VehicleEncoder(json.JSONEncoder):
+    def default(self, o: Any) -> Any:
+        if isinstance(o, Vehicle):
+            return o.__dict__
+        elif isinstance(o, Component):
+            return o.__dict__
+
+        return json.JSONEncoder.default(self, o)

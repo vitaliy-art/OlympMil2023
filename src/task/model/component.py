@@ -1,4 +1,5 @@
-from typing import Dict
+import json
+from typing import Any, Dict
 
 
 class Component:
@@ -50,3 +51,11 @@ class Component:
             return False
 
         return True
+
+
+class ComponentEncoder(json.JSONEncoder):
+    def default(self, o: Any) -> Any:
+        if isinstance(o, Component):
+            return o.__dict__
+
+        return json.JSONEncoder.default(self, o)
