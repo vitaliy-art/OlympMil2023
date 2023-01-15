@@ -1,6 +1,10 @@
 from config.config import Config
+from executor import Executor
+
 
 cfg = Config()
 cfg.parse_args()
-print(cfg.input_file)
-print(cfg.db)
+cfg.validate()
+
+exc = Executor(cfg)
+exc.execute()
